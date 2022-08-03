@@ -2,7 +2,7 @@ module class_Matrix
     implicit none
     private
     public :: Matrix, get_rows, get_cols, init, set, is_identity, sum, rsum, csum, fprint
-    public :: get_row, get_col, get, clone, is_in
+    public :: get_row, get_col, get, clone, is_in, multiply
 
     type Matrix
         real :: r, c
@@ -248,4 +248,29 @@ module class_Matrix
 
         return
     end function is_in
+
+    function multiply(this, b) result(m)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        type(Matrix) :: b, m
+        real :: i, j, k
+
+        if (this%c /= b%r) then
+            return
+        end if
+
+        m = Matrix(this%r, b%c)
+
+        do i = 1, m%r, 1
+            do j = 1, m%c, 1
+                m%vals(i, j) = 0
+                do k = 1, b%r, 1
+                    m%vals(i, j) = m%vals(i, j) + (this%vals(i, k) * b%vals(k, j))
+                end do
+            end do
+        end do
+
+        return
+    end function multiply
 end module class_Matrix
