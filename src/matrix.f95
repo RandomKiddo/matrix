@@ -2,7 +2,7 @@ module class_Matrix
     implicit none
     private
     public :: Matrix, get_rows, get_cols, init, set, is_identity, sum, rsum, csum, fprint
-    public :: get_row, get_col, get, clone, is_in, multiply
+    public :: get_row, get_col, get, clone, is_in, multiply, inner, det, is_square, inverse
 
     type Matrix
         real :: r, c
@@ -273,4 +273,84 @@ module class_Matrix
 
         return
     end function multiply
+
+    function inner(this, r1, c1, r2, c2) result(m)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        real :: r1, c1, r2, c2, i, j
+        type(Matrix) :: m
+
+        m = Matrix(r2 - r1, c2 - c1)
+
+        do i = r1, r2, 1
+            do j = c1, c2, 1
+                m%vals(i - r1 + 1, j - c1 + 1) = this%vals(i, j)
+            end do
+        end do
+
+        return
+    end function inner
+
+    function det(this) result(val)
+        implicit none 
+
+        type(Matrix), intent(in) :: this
+        real :: val
+
+        if (this%r /= this%c .or. (this%r /= 2 .and. this%r /= 3))) then
+            return
+        end if
+
+        if this%r == 2 then
+            val = this%vals(1, 1) * this%vals(2, 2) - (this%vals(1, 2) * this%vals(2, 1))
+        else
+            real :: i, j, k
+
+            i = this%vals(1, 1) * ((this%vals(2, 2) * this%vals(3, 3)) - (this%vals(2, 3) * this%vals(3, 2)))
+            j = this%vals(1, 2) * ((this%vals(2, 1) * this%vals(3, 3)) - (this%vals(2, 3) * this%vals(3, 1)))
+            k = this%vals(1, 3) * ((this%vals(2, 1) * this%vals(3, 2)) - (this%vals(2, 2) * this%vals(3, 1)))
+            val = i - j + k
+        end if
+
+        return
+    end function det
+
+    function is_square(this) result(l)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        logical :: l
+
+        if this%r == this%c then
+            l = .true.
+        else 
+            l = .false.
+        end if
+
+        return
+    end function is_square
+
+    function inverse(this) result(inv)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        type(Matrix) :: inv
+
+        if (this%r /= this%c .or. this%r /= 2) then
+            return
+        end if
+
+        inv = Matrix(2, 2)
+
+        real :: val
+        val = 1.0 / det(this)
+
+        inv%vals(1, 1) = this%vals(2, 2) * val
+        inv%vals(1, 2) = (-1) * this%vals(1, 2) * val
+        inv%vals(2, 1) = (-1) * this%vals(2, 1) * val
+        inv%vals(2, 2) = this%vals(1, 1) * val
+
+        return
+    end function inverse 
 end module class_Matrix
