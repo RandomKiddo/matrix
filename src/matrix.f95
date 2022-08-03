@@ -1,7 +1,8 @@
 module class_Matrix
     implicit none
     private
-    public :: Matrix, get_rows, get_cols, init, set, is_identity, sum, rsum, csum
+    public :: Matrix, get_rows, get_cols, init, set, is_identity, sum, rsum, csum, fprint
+    public :: get_row, get_col, get, clone, is_in
 
     type Matrix
         real :: r, c
@@ -23,6 +24,13 @@ module class_Matrix
         init%c = cols
         allocate(init%vals(rows, cols))
 
+        real :: i, j
+
+        do i = 1, this%r, 1
+            do j = 1, this%c, 1
+                init%vals(i, j) = 0
+            end do
+        end do
     end function init
 
     function get_rows(this) result(rows)
@@ -151,4 +159,93 @@ module class_Matrix
 
         return
     end function csum
+
+    subroutine fprint(this)
+        implicit none 
+
+        type(Matrix), intent(in) :: this
+        real :: i
+
+        do i = 1, this%r, 1
+            print *, this%vals(i)
+        end do
+    end subroutine fprint
+
+    function get_row(this, row) result(arr)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        real :: row, j
+        real, dimension(this%c) :: arr
+
+        do j = 1, this%c, 1
+            arr(j) = this%vals(row, j)
+        end do
+
+        return
+    end function get_row
+
+    function get_col(this, col) result(arr)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        real :: col, i
+        real, dimension(this%r) :: arr
+
+        do i = 1, this%r, 1
+            arr(i) = this%vals(i, col)
+        end do
+
+        return
+    end function get_col
+
+    function get(this, i, j) result(val)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        real :: i, j, val
+
+        val = this%vals(i, j)
+
+        return
+    end function get
+
+    function clone(this) result(cloned)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        type(Matrix) :: cloned
+        real :: i, j
+
+        cloned = Matrix(this%r, this%c)
+
+        do i = 1, this%r, 1
+            do j = 1, this%c, 1
+                cloned%vals(i, j) = this%vals(i, j)
+            end do
+        end do
+
+        return
+    end function clone
+
+    function is_in(this, val) result(located)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        real :: val, i, j
+        logical :: located
+
+        do i = 1, this%r, 1
+            do j = 1, this%c, 1
+                if (this%vals(i, j) == val) then 
+                    located = .true.
+                    return
+                end if
+            end do
+        end do
+
+        located = .false.
+
+        return
+    end function is_in
 end module class_Matrix
