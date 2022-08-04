@@ -18,4 +18,5 @@ program example
     mat = Matrix(5, 5) ! 5x5 Matrix
     set(mat, 3, 3, 1) ! Sets Matrix[3, 3] to 1
     call fprint(mat) ! Subroutine to print matrix
+end program example
 ```
