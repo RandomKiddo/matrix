@@ -2,7 +2,8 @@ module class_Matrix
     implicit none
     private
     public :: Matrix, get_rows, get_cols, init, set, is_identity, sum, rsum, csum, fprint
-    public :: get_row, get_col, get, clone, is_in, multiply, inner, det, is_square, inverse
+    public :: get_row, get_col, get, copy, is_in, multiply, inner, det, is_square, inverse
+    public :: is_empty, equals
 
     type Matrix
         real :: r, c
@@ -210,7 +211,7 @@ module class_Matrix
         return
     end function get
 
-    function clone(this) result(cloned)
+    function copy(this) result(cloned)
         implicit none
 
         type(Matrix), intent(in) :: this
@@ -353,4 +354,52 @@ module class_Matrix
 
         return
     end function inverse 
+
+    function is_empty(this) result(l)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        logical :: l
+        real :: i, j
+
+        do i = 1, this%r, 1
+            do j = 1, this%c, 1
+                if (this%vals(i, j) /= 0) then
+                    l = .false.
+                    return
+                end if
+            end do
+        end do
+
+        l = .true. 
+
+        return
+    end function is_empty
+
+    function equals(this, other) result(eq)
+        implicit none 
+
+        type(Matrix), intent(in) :: this
+        type(Matrix) :: other
+        logical :: eq
+        real :: i, j
+
+        if (this%r /= other%r .or. this%c /= other%c) then
+            eq = .false.
+            return
+        end if
+
+        do i = 1, this%r, 1
+            do j = 1, this%c, 1
+                if (this%vals(i, j) /= other%vals(i, j)) then
+                    eq = .false.
+                    return
+                end if
+            end do
+        end do
+
+        eq = .true.
+
+        return
+    end function equals
 end module class_Matrix
