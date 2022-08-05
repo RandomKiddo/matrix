@@ -3,7 +3,7 @@ module class_Matrix
     private
     public :: Matrix, get_rows, get_cols, init, set, is_identity, sum, rsum, csum, fprint
     public :: get_row, get_col, get, copy, is_in, multiply, inner, det, is_square, inverse
-    public :: is_empty, equals
+    public :: is_empty, equals, purge, nullify
 
     type Matrix
         real :: r, c
@@ -402,4 +402,25 @@ module class_Matrix
 
         return
     end function equals
+
+    subroutine nullify(this)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        real :: i, j
+
+        do i = 1, this%r, 1
+            do j = 1, this%c, 1
+                this%vals(i, j) = 0
+            end do
+        end do
+    end subroutine nullify
+
+    subroutine purge(this)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+
+        deallocate(this%vals)
+    end subroutine purge
 end module class_Matrix
