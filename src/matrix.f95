@@ -3,7 +3,7 @@ module class_Matrix
     private
     public :: Matrix, get_rows, get_cols, init, set, is_identity, sum, rsum, csum, fprint
     public :: get_row, get_col, get, copy, is_in, multiply, inner, det, is_square, inverse
-    public :: is_empty, equals, purge, nullify
+    public :: is_empty, equals, purge, nullify, average
 
     type Matrix
         real :: r, c
@@ -423,4 +423,24 @@ module class_Matrix
 
         deallocate(this%vals)
     end subroutine purge
+
+    function average(this) result(avg)
+        implicit none
+
+        type(Matrix), intent(in) :: this
+        real :: avg, i, j, n
+
+        n = this%r * this%c
+        avg = 0
+
+        do i = 1, this%r, 1
+            do j = 1, this%c, 1
+                avg = avg + this%vals(i, j)
+            end do
+        end do
+
+        avg = avg / n
+
+        return
+    end function average
 end module class_Matrix
